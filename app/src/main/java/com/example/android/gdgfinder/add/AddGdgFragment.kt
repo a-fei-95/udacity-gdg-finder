@@ -18,8 +18,10 @@ class AddGdgFragment : Fragment() {
         ViewModelProvider(this).get(AddGdgViewModel::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val binding = AddGdgFragmentBinding.inflate(inflater)
 
         // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
@@ -27,16 +29,18 @@ class AddGdgFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-        viewModel.showSnackBarEvent.observe(this, Observer {
+        viewModel.showSnackBarEvent.observe(viewLifecycleOwner) {
             if (it == true) { // Observed state is true.
                 Snackbar.make(
-                    activity!!.findViewById(android.R.id.content),
+                    requireActivity().findViewById(android.R.id.content),
                     getString(R.string.application_submitted),
                     Snackbar.LENGTH_SHORT // How long to display the message.
                 ).show()
                 viewModel.doneShowingSnackbar()
+                binding.button.contentDescription = getString(R.string.submitted)
+                binding.button.text = getString(R.string.done)
             }
-        })
+        }
 
         setHasOptionsMenu(true)
         return binding.root
